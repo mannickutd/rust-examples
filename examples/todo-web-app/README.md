@@ -27,6 +27,9 @@ cargo build
 ## Run local
 
 ```
+export DB_CONNECTION_STRING=postgresql://localhost:5432/todo-web-app
+export APP_HOST=127.0.0.1
+export APP_PORT=8080
 cargo run
 ```
 
