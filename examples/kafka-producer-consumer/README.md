@@ -29,11 +29,11 @@ What are the command line arguments
 ## Run Consumer
 
 ```
-./target/debug/kafka-producer-consumer -c consumer -b localhost:9092 -t rust-example 
+RUST_LOG=debug ./target/debug/kafka-producer-consumer -c consumer -b localhost:9092 -t rust-example 
 ```
 
 ## Run Producer
 
 ```
-./target/debug/kafka-producer-consumer -c producer -b localhost:9092 -t rust-example 
+RUST_LOG=debug ./target/debug/kafka-producer-consumer -c producer -b localhost:9092 -t rust-example 
 ```

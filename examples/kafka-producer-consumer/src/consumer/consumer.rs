@@ -34,7 +34,6 @@ impl ConsumerContext for CustomContext {
 type LoggingConsumer = StreamConsumer<CustomContext>;
 
 pub async fn consume_and_print(brokers: &str, group_id: &str, topics: &[&str]) {
-    println!("Consume and print");
     let context = CustomContext;
 
     let consumer: LoggingConsumer = ClientConfig::new()
@@ -50,19 +49,15 @@ pub async fn consume_and_print(brokers: &str, group_id: &str, topics: &[&str]) {
         .set_log_level(RDKafkaLogLevel::Debug)
         .create_with_context(context)
         .expect("Consumer creation failed");
-    println!("Consumer attempting to connect");
     consumer
         .subscribe(&topics.to_vec())
         .expect("Can't subscribe to specified topics");
-    println!("Before loop");
     loop {
         match consumer.recv().await {
             Err(e) => {
-                println!("Error {}", e);
                 warn!("Kafka error: {}", e);
             }
             Ok(m) => {
-                println!("here");
                 let payload = match m.payload_view::<str>() {
                     None => "",
                     Some(Ok(s)) => s,
@@ -71,8 +66,6 @@ pub async fn consume_and_print(brokers: &str, group_id: &str, topics: &[&str]) {
                         ""
                     }
                 };
-                println!("key: '{:?}', payload: '{}', topic: {}, partition: {}, offset: {}, timestamp: {:?}",
-                      m.key(), payload, m.topic(), m.partition(), m.offset(), m.timestamp());
                 info!("key: '{:?}', payload: '{}', topic: {}, partition: {}, offset: {}, timestamp: {:?}",
                       m.key(), payload, m.topic(), m.partition(), m.offset(), m.timestamp());
                 if let Some(headers) = m.headers() {

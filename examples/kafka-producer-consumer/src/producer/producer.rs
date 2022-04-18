@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use log::info;
-
+use futures::future::join_all;
 use rdkafka::config::ClientConfig;
 use rdkafka::message::{OwnedHeaders};
 use rdkafka::producer::{FutureProducer, FutureRecord};
@@ -38,21 +38,17 @@ pub async fn produce(brokers: &str, topic_name: &str) {
             delivery_status
         })
         .collect::<Vec<_>>();
-    println!("size of futures list {}", futures.len());
 
     // This loop will wait until all delivery statuses have been received.
     for future in futures {
         let delivery_status = future.await;
         match delivery_status {
-            Ok(n) => {
-                let (a, b) = n;
-                println!("success {}, {}", a, b);
+            Ok((a, b)) => {
+                info!("success {}, {}", a, b);
             }
-            Err(e) => {
-                let (a, b) = e;
-                println!("error {}", a);
+            Err((e, _)) => {
+                info!("error {}", e);
             }
         }
-        //info!("Future completed. Result: {:?}", delivery_status);
     }
 }
